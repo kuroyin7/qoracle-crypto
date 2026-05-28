@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qoracle · Crypto Research</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080808;--bg2:#0f0f0f;--bg3:#151515;--bg4:#1c1c1c;
+  --green:#00e676;--green2:#00c853;--greendim:#0a2e14;--green3:#1b5e20;
+  --blue:#4fc3f7;--blue2:#0288d1;--bluedim:#0a1f2e;
+  --red:#ef5350;--reddim:#1a0808;
+  --gray:#404040;--gray2:#2a2a2a;--white:#f0f0f0;--white2:#888;
+  --font:'JetBrains Mono',monospace;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--green);font-family:var(--font);font-size:13px;line-height:1.5}
+
+/* NAV */
+nav{background:var(--bg2);border-bottom:1px solid var(--greendim);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-box{width:32px;height:32px;border:1.5px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--green);flex-shrink:0}
+.logo-name{font-size:16px;font-weight:700;color:var(--white);letter-spacing:3px}
+.logo-mod{font-size:9px;color:var(--blue);letter-spacing:2px;margin-top:-3px}
+.nav-links{display:flex;gap:4px;align-items:center}
+.nb{background:none;border:1px solid var(--gray2);color:var(--white2);font-family:var(--font);font-size:10px;padding:5px 12px;cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .15s}
+.nb:hover{border-color:var(--green);color:var(--green)}
+.nb.cta{background:var(--green);border-color:var(--green);color:#000;font-weight:700}
+.nb.cta:hover{background:var(--green2)}
+
+/* TICKER */
+.ticker{background:var(--bg2);border-bottom:1px solid var(--greendim);padding:5px 24px;display:flex;align-items:center;gap:20px;font-size:10px;overflow-x:auto;white-space:nowrap;position:sticky;top:52px;z-index:99}
+.ticker::-webkit-scrollbar{display:none}
+.tk{display:flex;align-items:center;gap:6px;color:var(--white2)}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 2s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.v{color:var(--green);font-weight:500}.vb{color:var(--blue)}.sep{color:var(--gray)}
+
+/* LAYOUT */
+main{max-width:1100px;margin:0 auto;padding:24px}
+.page{display:none}.page.active{display:block}
+
+/* HERO */
+.hero{padding:52px 0 40px;text-align:center;border-bottom:1px solid var(--greendim);margin-bottom:36px}
+.hero-eyebrow{font-size:9px;letter-spacing:3px;color:var(--blue);text-transform:uppercase;margin-bottom:20px}
+.hero-h1{font-size:42px;font-weight:700;color:var(--white);letter-spacing:-2px;line-height:1.1;margin-bottom:16px}
+.hero-h1 em{color:var(--green);font-style:normal}
+.hero-p{font-size:12px;color:var(--white2);max-width:400px;margin:0 auto 32px;line-height:1.9}
+.hero-cta{display:flex;justify-content:center;gap:10px;margin-bottom:0}
+.btn-p{background:var(--green);border:none;color:#000;font-family:var(--font);font-size:11px;font-weight:700;padding:11px 24px;cursor:pointer;letter-spacing:2px;text-transform:uppercase;transition:all .15s}
+.btn-p:hover{background:var(--green2)}
+.btn-s{background:none;border:1px solid var(--blue);color:var(--blue);font-family:var(--font);font-size:11px;padding:11px 24px;cursor:pointer;letter-spacing:2px;text-transform:uppercase;transition:all .15s}
+.btn-s:hover{background:var(--bluedim)}
+
+/* SECTION HEADERS */
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.sec-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--blue);white-space:nowrap}
+.sec-line{flex:1;height:1px;background:var(--greendim)}
+.sec-right{font-size:10px;color:var(--gray);white-space:nowrap}
+
+/* WIN RATE BAR */
+.wr-bar{display:flex;align-items:center;gap:14px;padding:13px 16px;background:var(--bg2);border:1px solid var(--greendim);margin-bottom:16px}
+.wr-label{font-size:10px;color:var(--white2);white-space:nowrap}
+.wr-track{flex:1;height:4px;background:var(--gray2)}
+.wr-fill{height:100%;background:var(--green)}
+.wr-val{font-size:16px;font-weight:700;color:var(--green);white-space:nowrap}
+.wr-note{font-size:10px;color:var(--gray);white-space:nowrap}
+
+/* TRADE CARDS */
+.trade-cards{display:flex;flex-direction:column;gap:12px;margin-bottom:0}
+.trade-card{background:var(--bg2);border:1px solid var(--greendim);overflow:hidden}
+.tc-head{display:grid;grid-template-columns:28px 1fr 100px 100px 80px 70px;align-items:center;gap:8px;padding:12px 16px;cursor:pointer;transition:background .15s;user-select:none}
+.tc-head:hover{background:var(--bg3)}
+.tc-num{font-size:10px;color:var(--gray)}
+.tc-coin{font-size:13px;font-weight:700;color:var(--white)}
+.tc-price{font-size:10px;color:var(--white2);text-align:right}
+.tc-price span{font-size:9px;color:var(--gray);display:block;margin-bottom:1px}
+.tc-ret{font-size:14px;font-weight:700;color:var(--green);text-align:right}
+.tc-badge{text-align:right}
+.win-b{font-size:9px;padding:2px 8px;background:var(--greendim);color:var(--green);border:1px solid var(--green3);letter-spacing:1px}
+.loss-b{font-size:9px;padding:2px 8px;background:var(--reddim);color:var(--red);border:1px solid #4a1010;letter-spacing:1px}
+.tc-body{display:none}
+.tc-body.open{display:block}
+
+/* CHART */
+.chart-wrap{padding:16px;background:var(--bg3);border-top:1px solid var(--greendim)}
+.chart-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--gray);padding:5px 0 0}
+.price-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--greendim);border-top:1px solid var(--greendim)}
+.pm-cell{background:var(--bg2);padding:12px 16px}
+.pm-label{font-size:8px;letter-spacing:1px;color:var(--gray);text-transform:uppercase;margin-bottom:4px}
+.pm-val{font-size:13px;font-weight:700;color:var(--white)}
+.pm-val.g{color:var(--green)}.pm-val.b{color:var(--blue)}
+.note-row{font-size:10px;color:var(--gray);padding:10px 16px;background:var(--bg2);border:1px solid var(--greendim);border-top:none;line-height:1.7}
+
+/* DISCLAIMER */
+.disclaimer{font-size:10px;color:var(--gray);border:1px solid var(--gray2);padding:11px 16px;line-height:1.7;max-width:640px;margin:0 auto;text-align:left}
+
+/* DASHBOARD */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--greendim);margin-bottom:24px}
+.tab{padding:9px 16px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.tab:hover{color:var(--white2)}
+.tab.active{color:var(--green);border-bottom-color:var(--green)}
+.tab-content{display:none}.tab-content.active{display:block}
+.dash-grid{display:grid;grid-template-columns:1fr 280px;gap:16px}
+.sidebar{display:flex;flex-direction:column;gap:14px}
+
+/* PANELS */
+.panel{background:var(--bg2);border:1px solid var(--greendim)}
+.ph{padding:10px 16px;border-bottom:1px solid var(--greendim);display:flex;align-items:center;justify-content:space-between}
+.ph-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green);display:flex;align-items:center;gap:8px}
+.badge{font-size:8px;padding:2px 7px;letter-spacing:1px}
+.bg{background:var(--greendim);color:var(--green);border:1px solid var(--green3)}
+.bb{background:var(--bluedim);color:var(--blue);border:1px solid var(--blue2)}
+.ph-sub{font-size:9px;color:var(--gray)}
+.perf-row{display:flex;justify-content:space-between;align-items:center;padding:9px 16px;border-bottom:1px solid #111;font-size:12px}
+.perf-row:last-child{border-bottom:none}
+.pr-l{color:var(--white2)}.pr-v{color:var(--green);font-weight:500}
+.pr-v.b{color:var(--blue)}.pr-v.w{color:var(--white)}
+.log-body{padding:12px 16px;font-size:11px;line-height:2.2}
+.ll{display:flex;gap:10px}
+.lt{color:var(--gray);min-width:38px}
+.lm{color:var(--white2)}.lm .g{color:var(--green)}.lm .b{color:var(--blue)}
+
+/* SIGNAL */
+.sig-body{padding:20px}
+.sig-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.sig-coin{font-size:32px;font-weight:700;color:var(--white);letter-spacing:-1px}
+.sig-sub{font-size:9px;color:var(--gray);letter-spacing:1px;margin-bottom:6px}
+.sig-action{padding:8px 20px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border:none;font-family:var(--font);cursor:pointer;background:var(--green);color:#000}
+.sig-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px;background:var(--bg3);border:1px solid var(--gray2);margin-bottom:18px}
+.ss-label{font-size:8px;letter-spacing:1px;color:var(--gray);text-transform:uppercase;margin-bottom:6px}
+.ss-val{font-size:14px;font-weight:700}
+.g{color:var(--green)}.b{color:var(--blue)}.w{color:var(--white)}
+.sig-note{font-size:11px;color:var(--white2);border-left:2px solid var(--blue);padding-left:12px;line-height:1.8}
+
+/* RANKING TABLE */
+.rank-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.rank-table th{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gray);padding:8px 14px;text-align:left;border-bottom:1px solid var(--greendim);font-weight:400}
+.rank-table td{padding:11px 14px;border-bottom:1px solid #111;font-size:12px;vertical-align:middle}
+.rank-table tr:last-child td{border-bottom:none}
+.rank-table tr:hover td{background:var(--bg3)}
+.locked td{opacity:.25}
+.lock-l{color:var(--blue);font-size:10px;margin-left:4px}
+
+/* PLANS */
+.plans{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.plan{background:var(--bg2);border:1px solid var(--greendim);padding:24px;position:relative}
+.plan.featured{border-color:var(--blue)}
+.plan-tag{position:absolute;top:-1px;right:18px;font-size:8px;letter-spacing:1.5px;background:var(--blue);color:#000;padding:3px 9px;font-weight:700;text-transform:uppercase}
+.plan-tier{font-size:9px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-bottom:10px}
+.plan-price{font-size:28px;font-weight:700;color:var(--white);letter-spacing:-1px;margin-bottom:6px}
+.plan-price span{font-size:13px;font-weight:400;color:var(--gray)}
+.plan-desc{font-size:10px;color:var(--white2);margin-bottom:18px;line-height:1.7}
+.plan-ul{list-style:none;margin-bottom:20px}
+.plan-ul li{font-size:11px;color:var(--white2);padding:4px 0;display:flex;align-items:center;gap:8px}
+.plan-ul li::before{content:'→';color:var(--green);font-size:10px;flex-shrink:0}
+.plan-ul li.no{color:var(--gray)}
+.plan-ul li.no::before{content:'✕';color:var(--gray)}
+.plan-btn{width:100%;padding:10px;background:none;font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .15s}
+.plan-btn.g{border:1px solid var(--green);color:var(--green)}
+.plan-btn.g:hover{background:var(--green);color:#000}
+.plan-btn.bl{border:1px solid var(--blue);color:var(--blue)}
+.plan-btn.bl:hover{background:var(--blue);color:#000}
+.pdisclaim{font-size:10px;color:var(--gray);text-align:center;border-top:1px solid var(--greendim);padding-top:18px;line-height:1.9}
+
+/* FOOTER */
+footer{border-top:1px solid var(--greendim);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;font-size:10px;color:var(--gray);margin-top:40px}
+footer a{color:var(--blue);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+/* BASKET LOCK */
+.basket-lock{text-align:center;padding:56px 20px}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .dash-grid{grid-template-columns:1fr}
+  .plans{grid-template-columns:1fr}
+  .tc-head{grid-template-columns:24px 1fr 72px 72px 64px}
+  .tc-head .tc-price:first-of-type{display:none}
+  .price-meta{grid-template-columns:repeat(2,1fr)}
+  .hero-h1{font-size:30px}
+  nav .nb:not(.cta){display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <div class="logo-box">Q</div>
+    <div>
+      <div class="logo-name">QORACLE</div>
+      <div class="logo-mod">// crypto</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <button class="nb" onclick="nav('home')">Home</button>
+    <button class="nb" onclick="nav('dashboard')">Dashboard</button>
+    <button class="nb" onclick="nav('pricing')">Pricing</button>
+    <button class="nb cta" onclick="nav('dashboard')">View Today's Call →</button>
+  </div>
+</nav>
+
+<div class="ticker">
+  <div class="tk"><div class="dot"></div><span>SYSTEM</span><span class="v">&nbsp;LIVE</span></div>
+  <span class="sep">|</span>
+  <div class="tk">PIPELINE <span class="v">&nbsp;crypto_infinity</span></div>
+  <span class="sep">|</span>
+  <div class="tk">UPDATED <span class="v">&nbsp;29 MAY 2026 · 06:00 UTC</span></div>
+  <span class="sep">|</span>
+  <div class="tk">EXCHANGE <span class="vb">&nbsp;BINANCE SPOT</span></div>
+</div>
+
+<main>
+
+<!-- HOME -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-eyebrow">// Qoracle · Crypto Research</div>
+    <div class="hero-h1">10 calls.<br><em>Track every one.</em></div>
+    <div class="hero-p">Daily crypto research picks based on proprietary technical analysis. Every signal logged permanently. Real prices. No edits ever.</div>
+    <div class="hero-cta">
+      <button class="btn-p" onclick="nav('dashboard')">See Today's Call →</button>
+      <button class="btn-s" onclick="nav('pricing')">View Plans</button>
+    </div>
+  </div>
+
+  <div style="margin-bottom:40px">
+    <div class="sec-head">
+      <div class="sec-label">// Last 10 signals · tap any trade to see the chart</div>
+      <div class="sec-line"></div>
+      <div class="sec-right">Synthetic replay · P2 model · real Binance prices</div>
+    </div>
+
+    <div class="wr-bar">
+      <div class="wr-label">Last 10 win rate</div>
+      <div class="wr-track"><div class="wr-fill" style="width:100%"></div></div>
+      <div class="wr-val">10 / 10</div>
+      <div class="wr-note">Updated with each closed trade</div>
+    </div>
+
+    <div class="trade-cards" id="trade-cards"></div>
+    <div class="note-row">Synthetic replay using deployed model on historical Binance USDT data. Not live traded signals. All prices are real historical market data. Past performance does not guarantee future results.</div>
+  </div>
+
+  <div style="text-align:center;padding-bottom:40px">
+    <div class="disclaimer">⚠ All content is for educational and research purposes only. Not financial advice. Qoracle is not a SEBI registered investment advisor. Crypto markets are highly volatile. Always conduct your own research before making any investment decisions.</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('ts',this)">Today's Signal</div>
+    <div class="tab" onclick="switchTab('tr',this)">Rankings</div>
+    <div class="tab" onclick="switchTab('tb',this)">Basket</div>
+  </div>
+
+  <div id="ts" class="tab-content active">
+    <div class="dash-grid">
+      <div>
+        <div class="panel">
+          <div class="ph">
+            <div class="ph-title">Today's Call <span class="badge bg">LIVE</span></div>
+            <div class="ph-sub">29 May 2026 · 06:00 UTC</div>
+          </div>
+          <div class="sig-body">
+            <div class="sig-top">
+              <div>
+                <div class="sig-sub">Top pick · 29 May 2026</div>
+                <div class="sig-coin">NEAR / USDT</div>
+              </div>
+              <button class="sig-action">BUY</button>
+            </div>
+            <div class="sig-stats">
+              <div><div class="ss-label">Hold Period</div><div class="ss-val w">H = 5 days</div></div>
+              <div><div class="ss-label">Rank Today</div><div class="ss-val g">#1</div></div>
+              <div><div class="ss-label">Signal</div><div class="ss-val b">New Entry</div></div>
+            </div>
+            <div class="sig-note">Strong momentum confirmed across multiple timeframes. Ranked #1 in today's daily scan. Hold for up to 5 days or exit on rank degradation. Apply your own position sizing and risk management.</div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar">
+        <div class="panel">
+          <div class="ph"><div class="ph-title">Track Record</div></div>
+          <div class="perf-row"><div class="pr-l">Last 10 win rate</div><div class="pr-v">10 / 10</div></div>
+          <div class="perf-row"><div class="pr-l">Hold period</div><div class="pr-v w">Up to 5 days</div></div>
+          <div class="perf-row"><div class="pr-l">Exchange</div><div class="pr-v b">Binance spot</div></div>
+          <div class="perf-row"><div class="pr-l">Data</div><div class="pr-v w">Synthetic replay</div></div>
+        </div>
+        <div class="panel">
+          <div class="ph"><div class="ph-title">System Log</div></div>
+          <div class="log-body">
+            <div class="ll"><span class="lt">06:01</span><span class="lm"><span class="g">SIGNAL</span> NEAR → #1</span></div>
+            <div class="ll"><span class="lt">06:00</span><span class="lm">Pipeline <span class="g">OK</span></span></div>
+            <div class="ll"><span class="lt">06:00</span><span class="lm">Coins ranked <span class="g">done</span></span></div>
+            <div class="ll"><span class="lt">05:59</span><span class="lm">Data fetch <span class="g">done</span></span></div>
+            <div class="ll"><span class="lt">05:58</span><span class="lm">Model <span class="b">P2 loaded</span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tr" class="tab-content">
+    <div class="sec-head">
+      <div class="sec-label">// Today's ranking · top 5 free</div>
+      <div class="sec-line"></div>
+      <div class="sec-right" style="color:var(--blue);cursor:pointer" onclick="nav('pricing')">Unlock full list →</div>
+    </div>
+    <div class="panel">
+      <table class="rank-table">
+        <thead><tr>
+          <th style="width:36px">#</th>
+          <th>Coin</th>
+          <th style="text-align:right;width:120px">Pred. Return</th>
+          <th style="text-align:right;width:80px">Score</th>
+          <th style="width:90px">Strength</th>
+        </tr></thead>
+        <tbody>
+          <tr><td style="color:var(--gray);font-size:10px">1</td><td style="color:var(--white);font-weight:500">NEAR/USDT</td><td style="color:var(--green);font-weight:700;text-align:right">+43.2%</td><td style="color:var(--green);text-align:right">91.4</td><td><div style="height:3px;background:var(--gray2)"><div style="height:100%;width:91%;background:var(--green)"></div></div></td></tr>
+          <tr><td style="color:var(--gray);font-size:10px">2</td><td style="color:var(--white);font-weight:500">ZEC/USDT</td><td style="color:var(--green);font-weight:700;text-align:right">+22.1%</td><td style="color:var(--green);text-align:right">74.8</td><td><div style="height:3px;background:var(--gray2)"><div style="height:100%;width:75%;background:var(--green)"></div></div></td></tr>
+          <tr><td style="color:var(--gray);font-size:10px">3</td><td style="color:var(--white);font-weight:500">DEXE/USDT</td><td style="color:var(--green);font-weight:700;text-align:right">+19.3%</td><td style="color:var(--green);text-align:right">68.2</td><td><div style="height:3px;background:var(--gray2)"><div style="height:100%;width:68%;background:var(--green)"></div></div></td></tr>
+          <tr><td style="color:var(--gray);font-size:10px">4</td><td style="color:var(--white);font-weight:500">FET/USDT</td><td style="color:var(--green);font-weight:700;text-align:right">+17.6%</td><td style="color:var(--green);text-align:right">62.9</td><td><div style="height:3px;background:var(--gray2)"><div style="height:100%;width:63%;background:var(--green)"></div></div></td></tr>
+          <tr><td style="color:var(--gray);font-size:10px">5</td><td style="color:var(--white);font-weight:500">INJ/USDT</td><td style="color:var(--green);font-weight:700;text-align:right">+15.1%</td><td style="color:var(--green);text-align:right">57.3</td><td><div style="height:3px;background:var(--gray2)"><div style="height:100%;width:57%;background:var(--green)"></div></div></td></tr>
+          <tr class="locked"><td style="color:var(--gray);font-size:10px">6</td><td style="color:var(--gray)">— / USDT <span class="lock-l">🔒</span></td><td style="text-align:right;color:var(--gray)">—</td><td style="text-align:right;color:var(--gray)">—</td><td></td></tr>
+          <tr class="locked"><td style="color:var(--gray);font-size:10px">7</td><td style="color:var(--gray)">— / USDT <span class="lock-l">🔒</span></td><td style="text-align:right;color:var(--gray)">—</td><td style="text-align:right;color:var(--gray)">—</td><td></td></tr>
+          <tr class="locked"><td style="color:var(--gray);font-size:10px">8</td><td style="color:var(--gray)">— / USDT <span class="lock-l">🔒</span></td><td style="text-align:right;color:var(--gray)">—</td><td style="text-align:right;color:var(--gray)">—</td><td></td></tr>
+          <tr class="locked"><td style="color:var(--gray);font-size:10px">9</td><td style="color:var(--gray)">— / USDT <span class="lock-l">🔒</span></td><td style="text-align:right;color:var(--gray)">—</td><td style="text-align:right;color:var(--gray)">—</td><td></td></tr>
+          <tr class="locked"><td style="color:var(--gray);font-size:10px">10</td><td style="color:var(--gray)">— / USDT <span class="lock-l">🔒</span></td><td style="text-align:right;color:var(--gray)">—</td><td style="text-align:right;color:var(--gray)">—</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="tb" class="tab-content">
+    <div class="panel">
+      <div class="ph">
+        <div class="ph-title">Basket Portfolio <span class="badge bb">PRO</span></div>
+        <div class="ph-sub">3-slot simultaneous allocation</div>
+      </div>
+      <div class="basket-lock">
+        <div style="font-size:32px;color:var(--blue);margin-bottom:14px">🔒</div>
+        <p style="font-size:13px;color:var(--white2);margin-bottom:6px">Basket portfolio is a Pro feature</p>
+        <small style="font-size:10px;color:var(--gray)">3-coin simultaneous allocation · lower drawdown · separate track record</small>
+        <br><br>
+        <button class="btn-s" onclick="nav('pricing')">Upgrade to Pro →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div id="page-pricing" class="page">
+  <div class="sec-head" style="margin-top:8px;margin-bottom:28px">
+    <div class="sec-label">// Access tiers · Qoracle Crypto</div>
+    <div class="sec-line"></div>
+  </div>
+  <div class="plans">
+    <div class="plan">
+      <div class="plan-tier">Free</div>
+      <div class="plan-price">₹0 <span>/ month</span></div>
+      <div class="plan-desc">Verify the track record yourself before spending a single rupee.</div>
+      <ul class="plan-ul">
+        <li>Top 5 daily rankings (live, no delay)</li>
+        <li>Last 10 signals with real price charts</li>
+        <li>Live win rate tracker</li>
+        <li>System activity log</li>
+        <li class="no">Single coin signal (the actual call)</li>
+        <li class="no">Full ranking list</li>
+        <li class="no">Basket portfolio (3-slot)</li>
+        <li class="no">Email / WhatsApp alerts</li>
+      </ul>
+      <button class="plan-btn g">Start Free →</button>
+    </div>
+    <div class="plan featured">
+      <div class="plan-tag">Most Popular</div>
+      <div class="plan-tier">Pro</div>
+      <div class="plan-price">₹799 <span>/ month</span></div>
+      <div class="plan-desc">The actual call — which coin to buy today, before it moves.</div>
+      <ul class="plan-ul">
+        <li>Everything in Free</li>
+        <li>Daily single coin signal</li>
+        <li>Full ranking list (all coins)</li>
+        <li>Basket portfolio (3-slot allocation)</li>
+        <li>Predicted return + rank score</li>
+        <li>Email + WhatsApp alerts</li>
+        <li>Full historical signal archive</li>
+      </ul>
+      <button class="plan-btn bl">Get Pro Access →</button>
+    </div>
+  </div>
+  <div class="pdisclaim">All content is for educational and research purposes only. Not financial advice.<br>Qoracle is not a SEBI registered investment advisor. Please conduct your own due diligence before investing. Crypto markets are highly volatile.</div>
+</div>
+
+</main>
+
+<footer>
+  <div>Qoracle · Crypto Research · <a href="#">Disclaimer</a> · <a href="#">Terms</a></div>
+  <div>Educational platform · © 2026</div>
+</footer>
+
+<script>
+const OHLC = {
+  "DUSK/USDT":[
+    {d:"12",o:0.1288,h:0.1304,l:0.1233,c:0.1243},
+    {d:"13",o:0.1245,h:0.1348,l:0.123,c:0.1308},
+    {d:"14",o:0.1307,h:0.1503,l:0.1255,c:0.1482},
+    {d:"15",o:0.148,h:0.1551,l:0.1429,c:0.1481},
+    {d:"16",o:0.1483,h:0.1505,l:0.131,c:0.1361},
+    {d:"17",o:0.1361,h:0.1659,l:0.1357,c:0.1538},
+    {d:"18",o:0.1537,h:0.1658,l:0.1417,c:0.1562},
+    {d:"19",o:0.1565,h:0.1569,l:0.144,c:0.1467}
+  ],
+  "STORJ/USDT":[
+    {d:"13",o:0.1076,h:0.1108,l:0.1044,c:0.106},
+    {d:"14",o:0.1059,h:0.1111,l:0.1038,c:0.1081},
+    {d:"15",o:0.1082,h:0.1597,l:0.1003,c:0.1323},
+    {d:"16",o:0.1323,h:0.1532,l:0.1176,c:0.1208},
+    {d:"17",o:0.1208,h:0.1255,l:0.1059,c:0.1105}
+  ],
+  "ZEC/USDT":[
+    {d:"14",o:524.55,h:569.56,l:517.59,c:560.43},
+    {d:"15",o:560.53,h:564.43,l:510.63,c:515.4},
+    {d:"16",o:515.43,h:519.75,l:486.61,c:511.34},
+    {d:"17",o:511.27,h:554.92,l:496.47,c:535.95},
+    {d:"18",o:535.93,h:572.0,l:515.39,c:563.48},
+    {d:"19",o:563.43,h:582.74,l:551.0,c:573.98},
+    {d:"20",o:573.93,h:690.0,l:568.78,c:673.54},
+    {d:"21",o:673.47,h:686.76,l:645.06,c:664.45}
+  ],
+  "NEAR/USDT":[
+    {d:"16",o:1.544,h:1.555,l:1.479,c:1.496},
+    {d:"17",o:1.497,h:1.56,l:1.469,c:1.508},
+    {d:"18",o:1.508,h:1.629,l:1.478,c:1.626},
+    {d:"19",o:1.626,h:1.687,l:1.581,c:1.602},
+    {d:"20",o:1.603,h:1.729,l:1.581,c:1.703},
+    {d:"21",o:1.703,h:1.967,l:1.696,c:1.927},
+    {d:"22",o:1.927,h:2.337,l:1.918,c:2.102},
+    {d:"23",o:2.103,h:2.474,l:2.01,c:2.452},
+    {d:"24",o:2.452,h:2.509,l:2.329,c:2.395},
+    {d:"25",o:2.396,h:2.824,l:2.337,c:2.772},
+    {d:"26",o:2.772,h:2.978,l:2.527,c:2.553},
+    {d:"27",o:2.554,h:2.739,l:2.453,c:2.489}
+  ]
+};
+
+const TRADES = [
+  {num:10,coin:"NEAR/USDT",entry:2.102,exit:2.489,ret:"+18.4%",entryLabel:"May 22",exitLabel:"May 27",high:2.978},
+  {num:9, coin:"NEAR/USDT",entry:1.927,exit:2.553,ret:"+32.5%",entryLabel:"May 21",exitLabel:"May 26",high:2.978},
+  {num:8, coin:"NEAR/USDT",entry:1.703,exit:2.772,ret:"+62.8%",entryLabel:"May 20",exitLabel:"May 25",high:2.824},
+  {num:7, coin:"NEAR/USDT",entry:1.602,exit:2.395,ret:"+49.5%",entryLabel:"May 19",exitLabel:"May 24",high:2.509},
+  {num:6, coin:"NEAR/USDT",entry:1.626,exit:2.452,ret:"+50.8%",entryLabel:"May 18",exitLabel:"May 23",high:2.474},
+  {num:5, coin:"NEAR/USDT",entry:1.508,exit:2.102,ret:"+39.4%",entryLabel:"May 17",exitLabel:"May 22",high:2.337},
+  {num:4, coin:"ZEC/USDT", entry:511.34,exit:664.45,ret:"+29.9%",entryLabel:"May 16",exitLabel:"May 21",high:690.0},
+  {num:3, coin:"ZEC/USDT", entry:515.4, exit:673.54,ret:"+30.7%",entryLabel:"May 15",exitLabel:"May 20",high:690.0},
+  {num:2, coin:"STORJ/USDT",entry:0.1081,exit:0.1208,ret:"+11.7%",entryLabel:"May 14",exitLabel:"May 16",high:0.1597},
+  {num:1, coin:"DUSK/USDT",entry:0.1308,exit:0.1562,ret:"+19.4%",entryLabel:"May 13",exitLabel:"May 18",high:0.1659}
+];
+
+function fmt(v){return v>=100?v.toFixed(2):v>=1?v.toFixed(3):v.toFixed(4)}
+
+function buildTradeCards(){
+  const container=document.getElementById('trade-cards');
+  TRADES.forEach(t=>{
+    const div=document.createElement('div');
+    div.className='trade-card';
+    div.innerHTML=`
+      <div class="tc-head" onclick="toggleCard(${t.num})">
+        <div class="tc-num">${t.num}</div>
+        <div class="tc-coin">${t.coin}</div>
+        <div class="tc-price"><span>ENTRY</span>${fmt(t.entry)}</div>
+        <div class="tc-price"><span>EXIT</span>${fmt(t.exit)}</div>
+        <div class="tc-ret">${t.ret}</div>
+        <div class="tc-badge"><span class="win-b">WIN</span></div>
+      </div>
+      <div class="tc-body" id="body-${t.num}">
+        <div class="chart-wrap">
+          <canvas id="chart-${t.num}" width="900" height="180" style="width:100%;height:180px;display:block"></canvas>
+          <div class="chart-labels">
+            <span>May ${OHLC[t.coin][0].d}</span>
+            <span style="color:var(--gray)">entry ${fmt(t.entry)} · exit ${fmt(t.exit)} · ${t.ret}</span>
+            <span>May ${OHLC[t.coin][OHLC[t.coin].length-1].d}</span>
+          </div>
+        </div>
+        <div class="price-meta">
+          <div class="pm-cell"><div class="pm-label">Entry Price</div><div class="pm-val">${fmt(t.entry)}</div></div>
+          <div class="pm-cell"><div class="pm-label">Exit Price</div><div class="pm-val g">${fmt(t.exit)}</div></div>
+          <div class="pm-cell"><div class="pm-label">Return</div><div class="pm-val g">${t.ret}</div></div>
+          <div class="pm-cell"><div class="pm-label">Period High</div><div class="pm-val b">${fmt(t.high)}</div></div>
+        </div>
+      </div>`;
+    container.appendChild(div);
+  });
+  setTimeout(()=>toggleCard(10),120);
+}
+
+function drawChart(canvasId,coin,entryPrice,exitPrice){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const data=OHLC[coin];
+  if(!data)return;
+  const W=canvas.width,H=canvas.height;
+  const pad={t:12,r:10,b:26,l:58};
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+  ctx.clearRect(0,0,W,H);
+  const allP=data.flatMap(d=>[d.h,d.l]);
+  const minP=Math.min(...allP)*0.994;
+  const maxP=Math.max(...allP)*1.006;
+  const sy=v=>pad.t+ch-((v-minP)/(maxP-minP))*ch;
+  const bw=Math.max(Math.floor(cw/data.length*0.55),2);
+  const bg=cw/data.length;
+  ctx.strokeStyle='#1a2e1a';ctx.lineWidth=0.5;
+  for(let i=0;i<=4;i++){
+    const y=pad.t+(ch/4)*i;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+  }
+  ctx.fillStyle='#3a3a3a';ctx.font='9px JetBrains Mono,monospace';ctx.textAlign='right';
+  for(let i=0;i<=4;i++){
+    const price=minP+(maxP-minP)*(1-i/4);
+    const y=pad.t+(ch/4)*i;
+    const lbl=price>=100?price.toFixed(0):price>=1?price.toFixed(2):price.toFixed(4);
+    ctx.fillText(lbl,pad.l-4,y+3);
+  }
+  const ey=sy(entryPrice),xy=sy(exitPrice);
+  ctx.setLineDash([4,4]);
+  ctx.strokeStyle='rgba(0,230,118,0.35)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad.l,ey);ctx.lineTo(W-pad.r,ey);ctx.stroke();
+  ctx.strokeStyle='rgba(79,195,247,0.45)';
+  ctx.beginPath();ctx.moveTo(pad.l,xy);ctx.lineTo(W-pad.r,xy);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font='8px JetBrains Mono,monospace';ctx.textAlign='left';
+  ctx.fillStyle='rgba(0,230,118,0.7)';ctx.fillText('entry',pad.l+4,ey-4);
+  ctx.fillStyle='rgba(79,195,247,0.8)';ctx.fillText('exit',pad.l+4,xy-4);
+  data.forEach((d,i)=>{
+    const x=pad.l+i*bg+bg/2;
+    const isG=d.c>=d.o;
+    const col=isG?'#00e676':'#ef5350';
+    ctx.strokeStyle=col;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(x,sy(d.h));ctx.lineTo(x,sy(d.l));ctx.stroke();
+    const top=sy(Math.max(d.o,d.c));
+    const bot=sy(Math.min(d.o,d.c));
+    const bh=Math.max(bot-top,1.5);
+    ctx.fillStyle=col;
+    ctx.fillRect(x-bw/2,top,bw,bh);
+  });
+  ctx.fillStyle='#3a3a3a';ctx.font='9px JetBrains Mono,monospace';ctx.textAlign='center';
+  data.forEach((d,i)=>{
+    const x=pad.l+i*bg+bg/2;
+    ctx.fillText(d.d,x,H-6);
+  });
+}
+
+function toggleCard(num){
+  const body=document.getElementById('body-'+num);
+  const isOpen=body.classList.contains('open');
+  document.querySelectorAll('.tc-body').forEach(b=>b.classList.remove('open'));
+  if(!isOpen){
+    body.classList.add('open');
+    const t=TRADES.find(x=>x.num===num);
+    requestAnimationFrame(()=>drawChart('chart-'+num,t.coin,t.entry,t.exit));
+  }
+}
+
+function nav(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  window.scrollTo(0,0);
+  if(p==='dashboard'){
+    document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+    document.getElementById('ts').classList.add('active');
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.tab')[0].classList.add('active');
+  }
+}
+
+function switchTab(id,el){
+  document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+}
+
+buildTradeCards();
+</script>
+</body>
+</html>
